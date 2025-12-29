@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Step-by-Step AI Debate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10 font-sans">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2">Local AI Debate</h1>
+
+        {% if step == "start" %}
+        <form action="/debate" method="post" class="space-y-4">
+            <input type="hidden" name="step" value="start">
+            <label class="block text-gray-700 font-bold">What is the debate topic?</label>
+            <input type="text" name="topic" required placeholder="e.g., Should schools use AI?" 
+                   class="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 outline-none">
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Start Debate</button>
+        </form>
+        {% endif %}
+
+        {% if step != "start" %}
+        <div class="space-y-6">
+            <div class="text-sm font-bold text-gray-500 uppercase tracking-widest">Topic: {{ topic }}</div>
+
+            <div class="p-5 bg-green-50 rounded-lg border-l-8 border-green-500">
+                <h3 class="text-green-800 font-bold mb-1">PRO Team (Llama3)</h3>
+                <p class="text-gray-700 leading-relaxed">{{ pro_speech }}</p>
+            </div>
+
+            {% if con_speech %}
+            <div class="p-5 bg-red-50 rounded-lg border-l-8 border-red-500">
+                <h3 class="text-red-800 font-bold mb-1">CON Team (Mistral)</h3>
+                <p class="text-gray-700 leading-relaxed">{{ con_speech }}</p>
+            </div>
+            {% endif %}
+
+            {% if verdict %}
+            <div class="p-6 bg-blue-100 rounded-xl border-2 border-blue-400">
+                <h3 class="text-blue-900 font-black mb-1">JUDGE'S DECISION (Phi3)</h3>
+                <p class="text-blue-800 italic">"{{ verdict }}"</p>
+                <a href="/" class="block mt-4 text-center text-blue-600 font-bold underline">Start a New Debate</a>
+            </div>
+            {% endif %}
+
+            {% if step != "finished" %}
+            <form action="/debate" method="post">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <input type="hidden" name="pro_speech" value="{{ pro_speech }}">
+                <input type="hidden" name="con_speech" value="{{ con_speech }}">
+                <input type="hidden" name="step" value="{{ step }}">
+                <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-lg hover:opacity-80 transition">
+                    {% if step == "pro_done" %}Next: Con Rebuttal &rarr;{% else %}Next: Final Verdict &rarr;{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
